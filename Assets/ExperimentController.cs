@@ -1,21 +1,82 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class ExperimentController : MonoBehaviour {
 
   public GameObject cylinder;
+	public GameObject ceiling;
   private SpringJoint slingJoint;
-  private float currentTime = 0.0f; 
+ 	private float currentTime = 0.0f; 
 	private bool lerping = false;
 	private bool lowHigh = false;
+	public Canvas choiceSelector; 
+
+	private float trialLimit = 4.0f;
+	private float trialProgress = 0.0f;
+	private int currentTrial;
+	private bool inExperiment = false;
+
     // Use this for initialization
   void Start () {
-    cylinder = GameObject.Find("Weight");
-    slingJoint = cylinder.GetComponent<SpringJoint>();
+		choiceSelector.enabled = false;
+		StartExperiment();
   }
 
-	// Update is called once per frame
+	//initialize everything
+	void StartExperiment () {
+		currentTrial = 0;
+	}
+
+	void StartTrial () {
+		//add waiting time
+		//play sounds to notice that the trial is starting
+
+		currentTrial += 1;
+
+		if (ceiling == null) {
+			ceiling = Instantiate(Resources.Load("Ceiling")) as GameObject;
+			ceiling.name = "Ceiling";
+			slingJoint = ceiling.GetComponentInChildren<SpringJoint>();
+		}
+
+		trialProgress = 0.0f;
+		inExperiment = true;
+		//loads trial files
+
+		Debug.Log("Start Trial");
+	}
+
+	void StopTrial () {
+		Destroy(GameObject.Find("Weight"));
+		Destroy(GameObject.Find("Ceiling"));
+		ceiling = null;
+		slingJoint = null;
+		//shows UI for choice making here
+
+		inExperiment = false;
+
+		//checks if show UI or need another trial
+		if(currentTrial % 2 == 0) {
+			choiceSelector.enabled = true;
+		} else {
+			StartTrial();
+		}
+	}
+
+	// Update is called once per frame, controls joint stiffness here
 	void Update () {
+
+		if (inExperiment) {
+			trialProgress += Time.deltaTime;
+//			Debug.Log(trialProgress);
+
+			if (trialProgress > trialLimit) {
+				StopTrial();
+			}
+		}
+		
+
 
 		if(Input.GetKey(KeyCode.H)) {
 			lowHigh = true;
@@ -29,10 +90,10 @@ public class ExperimentController : MonoBehaviour {
 	    }
 
 		if (Input.GetKey(KeyCode.D)) {
-			Destroy(GameObject.Find("Ceiling"));
-			Instantiate(Resources.Load("Ceiling"));
-			cylinder = GameObject.Find("Weight");
-			slingJoint = cylinder.GetComponent<SpringJoint>();
+			if(!inExperiment) {
+				StartTrial();
+			
+			}
 		}
 
 		if (lerping)
@@ -42,7 +103,7 @@ public class ExperimentController : MonoBehaviour {
 			{
 				slingJoint.spring = Mathf.Lerp(5.0f, 40.0f, currentTime);
 			} else {
-				slingJoint.spring = Mathf.Lerp(40.0f, 5.0f, currentTime);
+				slingJoint.spring = 5.0f;
 			}
 		}
 
@@ -51,6 +112,12 @@ public class ExperimentController : MonoBehaviour {
 			currentTime = 0;
 		}
 
+	}
 
+	public void ChoiceSelected(int choiceIndex) {
+//		Debug.Log(choiceIndex);
+		//writes answer to file
+		choiceSelector.enabled = false;
+		StartTrial();
 	}
 }
