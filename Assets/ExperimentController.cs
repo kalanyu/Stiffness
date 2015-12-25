@@ -17,7 +17,7 @@ public class ExperimentController : MonoBehaviour {
 	public Canvas expmodeMenu;
 	public RectTransform stiffnessGuage;
 
-	private float trialLimit = 4.0f;
+	private float trialLimit = 2.0f;
 	private float trialProgress = 0.0f;
 	private int currentTrial;
 	private int currentIteration;
@@ -156,23 +156,24 @@ public class ExperimentController : MonoBehaviour {
 //			}
 //		}
 		
-//		Debug.Log(tcpClient.serverSignals[0]);
+		Debug.Log(tcpClient.serverSignals[2]);
 		if (stiffnessBar.enabled) {
 			var tmpLocalScale = stiffnessGuage.localScale;
 			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, minmaxNormalize(tcpClient.serverSignals[0]), tmpLocalScale.z);
 		}
 
 		if (slingJoint != null) {
-			if (minmaxNormalize(tcpClient.serverSignals[0]) > 0.5)
-			{
-				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
-				currentTime += 1.0f/60.0f;
-				slingJoint.spring = Mathf.Lerp(5.0f, 5.0f + (10.0f * tmpStiff), currentTime);
-				Debug.Log(slingJoint.spring);
-			} else {
-				slingJoint.spring = 5.0f;
-				currentTime = 0;
-			}
+			slingJoint.spring = 15.0f;
+//			if (minmaxNormalize(tcpClient.serverSignals[2]) > 0.5)
+//			{
+//				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
+//				currentTime += 1.0f/60.0f;
+//				slingJoint.spring = Mathf.Lerp(5.0f, 5.0f + (10.0f * tmpStiff), currentTime);
+//				Debug.Log(slingJoint.spring);
+//			} else {
+//				slingJoint.spring = 5.0f;
+//				currentTime = 0;
+//			}
 		}
 	}
 
@@ -180,7 +181,7 @@ public class ExperimentController : MonoBehaviour {
 //		Debug.Log(choiceIndex);
 		//writes answer to file
 		choiceSelector.enabled = false;
-		fileManager.writeFileWithMessage(choiceIndex + "\n\r");
+		fileManager.writeFileWithMessage(choiceIndex + "\n");
 		
 		if (currentTrial == expParamerters.Length) {
 			StopExperiment();
@@ -203,7 +204,8 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	private float minmaxNormalize(float value) {
-		var normed = ((value - 0.5f) / 0.5f);
+//		var normed = ((value - 0.5f) / 0.5f);
+		var normed = ((value - 0.5f) / 0.05f);
 		return normed < 0 ? 0 : normed;
 	}
 

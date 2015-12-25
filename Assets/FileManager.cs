@@ -41,7 +41,7 @@ public class FileManager {
 	public FileManager (string directoryPath, string fileName)
 	{
 		try {
-			Directory.CreateDirectory(directoryPath + "//ExperimentResults");
+			Directory.CreateDirectory(directoryPath + "/ExperimentResults");
 			filePath = directoryPath + fileName;
 			fileWriter = new StreamWriter(filePath);	
 		}
