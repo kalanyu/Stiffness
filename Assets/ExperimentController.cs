@@ -11,11 +11,13 @@ public class ExperimentController : MonoBehaviour {
 	public AudioSource startingBeeps;
   private SpringJoint slingJoint;
  	private float currentTime = 0.0f; 
-	private bool lerping = false;
-	private bool lowHigh = false;
-	public Canvas choiceSelector; 
 
-	private float trialLimit = 400.0f;
+	public Canvas choiceSelector; 
+	public Canvas stiffnessBar;
+	public Canvas expmodeMenu;
+	public RectTransform stiffnessGuage;
+
+	private float trialLimit = 4.0f;
 	private float trialProgress = 0.0f;
 	private int currentTrial;
 	private int currentIteration;
@@ -27,34 +29,59 @@ public class ExperimentController : MonoBehaviour {
 	private FileManager expParamReader;
 	private string[] expParamerters;
 	private string[] currentTrialParameters;
-
+	public Text networkConnectionStatus;
+	
     // Use this for initialization
   void Start () {
 		directoryPath = Path.GetFullPath(".");
 		tcpClient = GameObject.Find("TCPClientManager").GetComponent<TCPClientManager>();
-		if(tcpClient == null) {
-			Debug.Log("null");
-		}
-		choiceSelector.enabled = false;
-		StartExperiment();
-		 StartCoroutine(StartTrial());
+		stiffnessBar.enabled = false;
 
+		if(tcpClient != null) {
+			tcpClient.statusChanged += UpdateNetworkStatus;
+			tcpClient.connect();
+		}
+
+		choiceSelector.enabled = false;
   }
 
 	//initialize everything
-	void StartExperiment () {
+	void StartExperiment (int type) {
+		startingBeeps.Play();
+		string expName = "";
+		
+		switch(type) {
+			case 1:
+				expName = "lowlow";
+				break;
+			case 2:
+				expName = "highhigh";
+				break;
+			case 3:
+				expName = "lowhigh";
+				break;
+			case 4:
+				expName = "highhigh";
+				break;
+			default:
+				break;
+		}
 		//experiment parameters (weight one, weight two
-		expParamReader = new FileManager(directoryPath, "/ExperimentParameters/lowlow");
-		expParamerters = expParamReader.readAllLinesFromFiles();
-		expParamReader.closeFile();
-
-		var fileName = DateTime.Now.ToString("dd_MMMM_yyyy_hh_mm");
-		fileManager = new FileManager(directoryPath, "/ExperimentResults/" + fileName + ".csv");
-		currentTrial = 0;
-		//one trial has two interations
-		currentIteration = 1;
-
-		tcpClient.connect();
+		try {
+			expParamReader = new FileManager(directoryPath, "/ExperimentParameters/" + expName + ".csv",'r');
+			expParamerters = expParamReader.readAllLinesFromFiles();
+			expParamReader.closeFile();
+	
+			var fileName = DateTime.Now.ToString("dd_MMMM_yyyy_hh_mm");
+			fileManager = new FileManager(directoryPath, "/ExperimentResults/" + fileName + ".csv");
+			currentTrial = 0;
+			//one trial has two interations
+			currentIteration = 1;
+	
+			StartCoroutine(StartTrial());
+		} catch {
+			Debug.Log("sth wrong with file");
+		}
 	}
 
 	IEnumerator StartTrial () {
@@ -64,16 +91,17 @@ public class ExperimentController : MonoBehaviour {
 		//play sounds to notice that the trial is starting
 
 		if (currentIteration == 1) {
-			currentTrialParameters = expParamerters[currentTrial].Split(','[0]);
+			currentTrialParameters = expParamerters[currentTrial].Split(',');
 			currentTrial += 1;
 		}
-
 		if (ceiling == null) {
 			ceiling = Instantiate(Resources.Load("Ceiling")) as GameObject;
 			ceiling.name = "Ceiling";
 			foreach(Rigidbody body in ceiling.GetComponentsInChildren<Rigidbody>()) {
 				if (body.name == "Weight") {
-					body.mass = float.Parse(currentTrialParameters[currentIteration-1]);
+					body.mass = float.Parse(currentTrialParameters[currentIteration]);
+					Debug.Log(expParamerters.Length + "," + currentTrial + "," + currentIteration + "," + body.mass );
+
 				}
 			}
 			slingJoint = ceiling.GetComponentInChildren<SpringJoint>();
@@ -100,14 +128,14 @@ public class ExperimentController : MonoBehaviour {
 			choiceSelector.enabled = true;
 			currentIteration = 1;
 		} else {
-			currentIteration += 1;
+			currentIteration = 2;
 			StartCoroutine(StartTrial());
 		}
 	}
 
 	void StopExperiment () {
 		fileManager.closeFile();
-
+		Application.Quit();
 	}
 	// Update is called once per frame, controls joint stiffness here
 	void Update () {
@@ -129,26 +157,23 @@ public class ExperimentController : MonoBehaviour {
 //		}
 		
 //		Debug.Log(tcpClient.serverSignals[0]);
-
-		if (tcpClient.serverSignals[0] > 0.5)
-		{
-			var tmpStiff = tcpClient.serverSignals[0];
-			currentTime += 1.0f/60.0f;
-//			if(lowHigh) 
-//			{
-			//how about min-maxing and use the value as time increment?
-				//should be normalizing here
-				slingJoint.spring = Mathf.Lerp(5.0f, 5.0f + (40.0f * ((tmpStiff - 0.5f) * 2f)), currentTime);
-//			} else {
-//				slingJoint.spring = 5.0f;
-//			}
-		} else {
-
-//		if (currentTime >= 1) {
-			lerping = false;
-			currentTime = 0;
+		if (stiffnessBar.enabled) {
+			var tmpLocalScale = stiffnessGuage.localScale;
+			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, minmaxNormalize(tcpClient.serverSignals[0]), tmpLocalScale.z);
 		}
 
+		if (slingJoint != null) {
+			if (minmaxNormalize(tcpClient.serverSignals[0]) > 0.5)
+			{
+				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
+				currentTime += 1.0f/60.0f;
+				slingJoint.spring = Mathf.Lerp(5.0f, 5.0f + (10.0f * tmpStiff), currentTime);
+				Debug.Log(slingJoint.spring);
+			} else {
+				slingJoint.spring = 5.0f;
+				currentTime = 0;
+			}
+		}
 	}
 
 	public void ChoiceSelected(int choiceIndex) {
@@ -168,5 +193,22 @@ public class ExperimentController : MonoBehaviour {
 		//make sure everything is closed
 		StopTrial();
 		StopExperiment();
+	}
+
+	void UpdateNetworkStatus(String status) {
+		networkConnectionStatus.text = status;
+		if (status == "Connected") {
+			stiffnessBar.enabled = true;
+		}
+	}
+
+	private float minmaxNormalize(float value) {
+		var normed = ((value - 0.5f) / 0.5f);
+		return normed < 0 ? 0 : normed;
+	}
+
+	public void ExperimentModeSelected(int mode) {
+		StartExperiment(mode);
+		expmodeMenu.enabled = false;
 	}
 }

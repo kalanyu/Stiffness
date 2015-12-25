@@ -18,28 +18,59 @@ public class TCPClientManager : MonoBehaviour {
 	public float[] serverSignals = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 	public int bufferSize = 10;
 	public int channel = 6;
-	
+
+	public delegate void ConnectionStatusChanged(String status);
+	public ConnectionStatusChanged statusChanged;
+
 	void Start()
     {
-		Debug.Log("new client");
-
+		if (statusChanged != null) {
+			statusChanged("Creating Connection");
+		}
     }
+
 	public void connect()
 	{
-		client = new TcpClient("192.168.2.1",6535);
-		if (client.Connected) {
-			mRunning = true;
-			ThreadStart ts2 = new ThreadStart(Reads);
-			rThread = new Thread(ts2);
-			rThread.Start();
+
+		try {
+			
+			client = new TcpClient(Network.player.ipAddress,6535);
+			if (client.Connected) {
+				mRunning = true;
+				ThreadStart ts2 = new ThreadStart(Reads);
+				rThread = new Thread(ts2);
+				rThread.Start();
+	
+				if (statusChanged != null) {
+					statusChanged("Connected");
+				}
+			}
+		} catch {
+			Debug.Log("Cannot reach server, reestablishing connection in 5 seconds");
+			if (statusChanged != null) {
+				statusChanged("Connection failed, reconnecting..");
+			}
+			StartCoroutine(reconnect());
 		}
+	}
+
+	public IEnumerator reconnect() {
+		yield return new WaitForSeconds(5);
+		connect();
 	}
 	
     public void stopListening()
     {
         mRunning = false;
-		if (client.Connected) {
-			client.Close();
+		try {
+			if (client.Connected) {
+				client.Close();
+			}
+			if (statusChanged != null) {
+				statusChanged("Connection closed");
+			}
+		} catch {
+			//not connecting to any server
 		}
 	}
 	
@@ -50,10 +81,10 @@ public class TCPClientManager : MonoBehaviour {
 		{
 			NetworkStream stream = client.GetStream();
 				
-				Debug.Log("Client fetched, checking data availability");
+//				Debug.Log("Client fetched, checking data availability");
 				if (stream.DataAvailable)
 				{
-					Debug.Log("Prepare to read");
+//					Debug.Log("Prepare to read");
 					StreamReader reader = new StreamReader(stream);
 					msg = reader.ReadLine();
 
@@ -87,7 +118,7 @@ public class TCPClientManager : MonoBehaviour {
 					StreamWriter writer = new StreamWriter(stream);
 					writer.WriteLine("Ack\n\r");
 					writer.Flush();
-					Debug.Log("WriteBack");				
+//					Debug.Log("WriteBack");				
 				}
 			}
 	}

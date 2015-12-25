@@ -11,7 +11,7 @@ count_list = [int(trial_no)] * len(variation);
 print sum(count_list)
 count = 1
 # 1.000000e+00,-9.800000e+00,5.000000e-01,0.000000e-01,0.000000e-02,-10.000000e-01
-with open(filename,'w') as f:
+with open(filename+'.csv','w') as f:
     while sum(count_list) != 0:
         index = randint(0,len(variation)-1)
         if count_list[index] == 0:

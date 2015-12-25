@@ -8,7 +8,6 @@ public class FileManager {
 	StreamWriter fileWriter;
 	StreamReader fileReader;
 	string filePath;
-	private int count = 0;
 
 	public FileManager (string directoryPath, string fileName, char mode)
 	{
