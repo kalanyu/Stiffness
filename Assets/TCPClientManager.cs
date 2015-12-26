@@ -34,7 +34,7 @@ public class TCPClientManager : MonoBehaviour {
 
 		try {
 			
-			client = new TcpClient("127.0.0.1",6535);
+			client = new TcpClient(Network.player.ipAddress,6363);
 			if (client.Connected) {
 				mRunning = true;
 				ThreadStart ts2 = new ThreadStart(Reads);
@@ -55,7 +55,7 @@ public class TCPClientManager : MonoBehaviour {
 	}
 
 	public IEnumerator reconnect() {
-		yield return new WaitForSeconds(5);
+		yield return new WaitForSeconds(5 * Time.timeScale);
 		connect();
 	}
 	
@@ -84,41 +84,42 @@ public class TCPClientManager : MonoBehaviour {
 //				Debug.Log("Client fetched, checking data availability");
 				if (stream.DataAvailable)
 				{
-//					Debug.Log("Prepare to read");
+					Debug.Log("Prepare to read");
 					StreamReader reader = new StreamReader(stream);
 					msg = reader.ReadLine();
 
-					if(!msg.StartsWith("whoareyou"))
-					{
-						values = msg.Split(","[0]);
-					
-						for (int j = 0; j < channel; j++)
-						{	
-							serverSignals[j] = float.Parse(values[j]);
-//							signals[j].Add(float.Parse(values[j]));
-//							if (signals[j].Count > bufferSize)
-//							{
-//								serverSignals[j] = 0.0f;
-//								float temp = 0.0f;
-//								for (int k = 0; k < bufferSize; k ++)
-//								{
-//									temp = temp + signals[j][k];
-//								}
-//								temp = temp/bufferSize;
-//								serverSignals[j] = temp;
-//								signals[j].Clear();	
-//								
-//							}	
-						}
-
-//						Debug.Log(serverSignals);
-					}
-					//Debug.Log(msg);					
+//					if(!msg.StartsWith("Welcome") && msg.Contains(","))
+//					{
+//						values = msg.Split(","[0]);
+//					
+//						for (int j = 0; j < channel; j++)
+//						{	
+//							serverSignals[j] = float.Parse(values[j]);
+////							signals[j].Add(float.Parse(values[j]));
+////							if (signals[j].Count > bufferSize)
+////							{
+////								serverSignals[j] = 0.0f;
+////								float temp = 0.0f;
+////								for (int k = 0; k < bufferSize; k ++)
+////								{
+////									temp = temp + signals[j][k];
+////								}
+////								temp = temp/bufferSize;
+////								serverSignals[j] = temp;
+////								signals[j].Clear();	
+////								
+////							}	
+//						}
+//
+////						Debug.Log(serverSignals);
+//					}
+//					Debug.Log(msg);					
 					
 					StreamWriter writer = new StreamWriter(stream);
-					writer.WriteLine("Ack\n\r");
+					writer.WriteLine("Ack");
 					writer.Flush();
-//					Debug.Log("WriteBack");				
+					writer.AutoFlush = true;
+					Debug.Log("WriteBack");				
 				}
 			}
 	}

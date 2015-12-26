@@ -17,7 +17,7 @@ public class ExperimentController : MonoBehaviour {
 	public Canvas expmodeMenu;
 	public RectTransform stiffnessGuage;
 
-	private float trialLimit = 2.0f;
+	private float trialLimit = 3.0f;
 	private float trialProgress = 0.0f;
 	private int currentTrial;
 	private int currentIteration;
@@ -87,7 +87,7 @@ public class ExperimentController : MonoBehaviour {
 	IEnumerator StartTrial () {
 		//add waiting time
 		startingBeeps.Play();
-		yield return new WaitForSeconds(4f);
+		yield return new WaitForSeconds(4f * Time.timeScale);
 		//play sounds to notice that the trial is starting
 
 		if (currentIteration == 1) {
@@ -144,7 +144,7 @@ public class ExperimentController : MonoBehaviour {
 			trialProgress += Time.deltaTime;
 //			Debug.Log(trialProgress);
 
-			if (trialProgress > trialLimit) {
+			if (trialProgress > trialLimit * Time.timeScale) {
 				StopTrial();
 			}
 		}
@@ -156,14 +156,15 @@ public class ExperimentController : MonoBehaviour {
 //			}
 //		}
 		
-		Debug.Log(tcpClient.serverSignals[2]);
+//		Debug.Log(tcpClient.serverSignals[2]);
 		if (stiffnessBar.enabled) {
 			var tmpLocalScale = stiffnessGuage.localScale;
 			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, minmaxNormalize(tcpClient.serverSignals[0]), tmpLocalScale.z);
 		}
 
 		if (slingJoint != null) {
-			slingJoint.spring = 15.0f;
+			slingJoint.spring = 60.0f;
+//			slingJoint.spring = 30.0f;
 //			if (minmaxNormalize(tcpClient.serverSignals[2]) > 0.5)
 //			{
 //				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
