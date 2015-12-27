@@ -61,7 +61,7 @@ public class ExperimentController : MonoBehaviour {
 				expName = "lowhigh";
 				break;
 			case 4:
-				expName = "highhigh";
+				expName = "highlow";
 				break;
 			default:
 				break;
@@ -111,7 +111,7 @@ public class ExperimentController : MonoBehaviour {
 		inExperiment = true;
 		//loads trial files
 
-		Debug.Log("Start Trial");
+//		Debug.Log("Start Trial");
 	}
 
 	void StopTrial () {
@@ -163,7 +163,11 @@ public class ExperimentController : MonoBehaviour {
 		}
 
 		if (slingJoint != null) {
-			slingJoint.spring = 60.0f;
+//			slingJoint.spring = 30.0f;
+//			slingJoint.damper = 10;
+			slingJoint.spring = 100.0f;
+			slingJoint.damper = 20;
+
 //			slingJoint.spring = 30.0f;
 //			if (minmaxNormalize(tcpClient.serverSignals[2]) > 0.5)
 //			{
