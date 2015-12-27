@@ -34,7 +34,7 @@ public class TCPClientManager : MonoBehaviour {
 
 		try {
 			
-			client = new TcpClient("192.168.100.155",6353);
+			client = new TcpClient(Network.player.ipAddress,6353);
 			if (client.Connected) {
 				mRunning = true;
 				ThreadStart ts2 = new ThreadStart(Reads);

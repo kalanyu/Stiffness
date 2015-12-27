@@ -41,6 +41,7 @@ public class ExperimentController : MonoBehaviour {
 			tcpClient.statusChanged += UpdateNetworkStatus;
 			tcpClient.connect();
 		}
+//			slingJoint = GameObject.Find("Cube").GetComponentInChildren<SpringJoint>();
 
 		choiceSelector.enabled = false;
   }
@@ -165,20 +166,18 @@ public class ExperimentController : MonoBehaviour {
 		if (slingJoint != null) {
 //			slingJoint.spring = 30.0f;
 //			slingJoint.damper = 10;
-			slingJoint.spring = 100.0f;
-			slingJoint.damper = 20;
-
-//			slingJoint.spring = 30.0f;
-//			if (minmaxNormalize(tcpClient.serverSignals[2]) > 0.5)
-//			{
-//				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
-//				currentTime += 1.0f/60.0f;
-//				slingJoint.spring = Mathf.Lerp(5.0f, 5.0f + (10.0f * tmpStiff), currentTime);
+			if (minmaxNormalize(tcpClient.serverSignals[0]) > 0.2)
+			{
+				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
+				currentTime += 1.0f/60.0f;
+				slingJoint.spring = Mathf.Lerp(30.0f, 30.0f + (70.0f * tmpStiff), currentTime);
+				slingJoint.damper = 20;
 //				Debug.Log(slingJoint.spring);
-//			} else {
-//				slingJoint.spring = 5.0f;
-//				currentTime = 0;
-//			}
+			} else {
+				slingJoint.spring = 30.0f;
+				slingJoint.damper = 10;
+				currentTime = 0;
+			}
 		}
 	}
 
@@ -210,11 +209,14 @@ public class ExperimentController : MonoBehaviour {
 
 	private float minmaxNormalize(float value) {
 //		var normed = ((value - 0.5f) / 0.5f);
-		var normed = ((value - 0.5f) / 0.05f);
-		return normed < 0 ? 0 : normed;
+//		var normed = ((value - 0.5f) / 0.05f);
+		var normed = Mathf.Max(0, Mathf.Min(1, value));
+		
+		return normed;
 	}
 
 	public void ExperimentModeSelected(int mode) {
+
 		StartExperiment(mode);
 		expmodeMenu.enabled = false;
 	}
