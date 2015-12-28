@@ -170,7 +170,7 @@ public class ExperimentController : MonoBehaviour {
 			{
 				var tmpStiff = minmaxNormalize(tcpClient.serverSignals[0]);
 				currentTime += 1.0f/60.0f;
-				slingJoint.spring = Mathf.Lerp(30.0f, 30.0f + (70.0f * tmpStiff), currentTime);
+				slingJoint.spring = Mathf.Lerp(30.0f, 30.0f + (50.0f * tmpStiff), currentTime);
 				slingJoint.damper = 20;
 //				Debug.Log(slingJoint.spring);
 			} else {
