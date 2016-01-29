@@ -10,7 +10,7 @@ public static class LengthText {
 //		var meshRenderer = lengthText.AddComponent<MeshRenderer>();
 
 		textMesh.text = textVal;
-		textMesh.characterSize = 0.01f;
+		textMesh.characterSize = 0.005f;
 		textMesh.anchor = TextAnchor.MiddleLeft;
 		textMesh.alignment = TextAlignment.Left;
 		textMesh.fontSize = 50;

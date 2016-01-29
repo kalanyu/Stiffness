@@ -9,7 +9,6 @@ public class RulerScript : MonoBehaviour {
 	private List<GameObject> lengthTexts;
 	// Use this for initialization
 	void Start () {
-		lengthCM = 1;
 		rulerTransform = GameObject.Find("Ruler").transform;
 		lengthTexts = new List<GameObject>();
 	}
@@ -35,11 +34,18 @@ public class RulerScript : MonoBehaviour {
 
 
 		for (int i = lengthTexts.Count; i < (int)length+1; i++ ) {
-				var newText = LengthText.CreateLengthText(i.ToString() + " cm");
+				var newText = LengthText.CreateLengthText("   " + i.ToString() + " cm");
 				var rt = rulerTransform.position;
-				newText.transform.position = new Vector3(rt.x, rt.y - i, rt.z);
+				newText.transform.position = (new Vector3(rt.x, rt.y - (i * lengthCM), rt.z));
 				newText.transform.parent = rulerTransform;
 				lengthTexts.Add(newText);
+		}
+
+		foreach (var item in lengthTexts) {
+			var startLoc = item.transform.position;
+			Debug.DrawRay (startLoc,this.transform.parent.rotation *(Vector3.left * (lengthCM * 0.5f)), Color.yellow);
+			Debug.DrawRay (startLoc,this.transform.parent.rotation *(Vector3.right * (lengthCM * 0.5f)), Color.yellow);
+
 		}
 	}
 
