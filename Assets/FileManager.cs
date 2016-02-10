@@ -40,8 +40,7 @@ public class FileManager {
 	
 	public FileManager (string directoryPath, string fileName)
 	{
-		try {
-			Directory.CreateDirectory(directoryPath + "/ExperimentResults");
+		try {			
 			filePath = directoryPath + fileName;
 			fileWriter = new StreamWriter(filePath);	
 		}
@@ -77,6 +76,7 @@ public class FileManager {
 				lines.Add(line);
 			}
 		}
+		fileReader.Close();
 		return lines.ToArray();
 	}
 

@@ -21,7 +21,7 @@ public class HandScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Debug.Log (other.name);
+//		Debug.Log (other.name);
 		var weightPos = other.transform.position;
 		weightPos.y -= 0.128f;
 		this.transform.position = weightPos;
