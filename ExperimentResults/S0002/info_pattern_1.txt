@@ -1,0 +1,6 @@
+02182016
+Name:Asdad
+Surname:Asdad
+Age:25
+BodyType:Normal
+Sex: Male

@@ -38,7 +38,7 @@ public class TCPClientManager : MonoBehaviour {
         {
 
             client = new TcpClient();
-            var result = client.BeginConnect(Network.player.ipAddress, 6353, null, null);
+            var result = client.BeginConnect("localhost", 6353, null, null);
             var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(1));
 
             if (client.Connected)
@@ -117,7 +117,9 @@ public class TCPClientManager : MonoBehaviour {
 		}
         //not connecting to any server
         // wait fpr listening thread to terminate (max. 500ms)
-        rThread.Join(500);
+		if (rThread != null) {
+	        rThread.Join(500);
+		}
     }
 	
 	void Reads()
