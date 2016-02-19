@@ -1,0 +1,6 @@
+02192016
+Name:Asdsadas
+Surname:Asdas
+Age:25
+BodyType:Slim
+Sex: Male

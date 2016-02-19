@@ -2,7 +2,7 @@ from random import randint
 from datetime import datetime
 import sys
 
-variation = ['0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1.0'];
+variation = ['0.4','0.5','0.6','0.7','0.8','0.9','1.0'];
 trial_no = raw_input('Input total trial number for each stimulus value\n')
 print 'total trial number = ' + str(int(trial_no) * len(variation))
 
@@ -27,10 +27,10 @@ with open(filename+'.csv','w') as f:
 
             f.write(str(count) + ',') #trial count
             if filename != "lowhigh" and filename != "highlow":
-                trial_info += (variation[index] if order else '0.5') + ','
-                trial_info += ('0.5' if order else variation[index])
+                trial_info += (variation[index] if order else '0.7') + ','
+                trial_info += ('0.7' if order else variation[index])
             else:
-                trial_info += '0.5,' #stimulus weight
+                trial_info += '0.7,' #stimulus weight
                 trial_info += variation[index] #comparison weight
 
             print "line " + str(count) + ":" + trial_info

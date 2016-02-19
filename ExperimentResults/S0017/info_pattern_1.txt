@@ -1,0 +1,6 @@
+02192016
+Name:Asdas
+Surname:Asda
+Age:2
+BodyType:Muscular
+Sex: Male
