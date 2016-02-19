@@ -17,11 +17,13 @@ public class ExperimentController : MonoBehaviour {
 
 	public Canvas choiceSelector; 
 	public Canvas stiffnessBar;
+	public Canvas stiffnessBar2;
 	public Canvas expmodeMenu;
 	public Canvas continueMenu;
 	public Canvas quitMenu;
 
 	public RectTransform stiffnessGuage;
+	public RectTransform stiffnessGuage2;
 
 	private float trialLimit = 4.0f;
 	private float trialProgress = 0.0f;
@@ -40,6 +42,8 @@ public class ExperimentController : MonoBehaviour {
 	public Text networkConnectionStatus;
 
 	private float stiffness;
+	private float baseStiffness;
+
 	public float maxStrengthRatio = 1.0f;
 	private float stiffnessThreshold = 1.5f;
 	private string resultDirectory;
@@ -55,7 +59,6 @@ public class ExperimentController : MonoBehaviour {
 	 void Start () {
 
 		tcpClient = GameObject.Find("TCPClientManager").GetComponent<TCPClientManager>();
-		stiffnessBar.enabled = false;
 
 		if(tcpClient != null) {
 			tcpClient.statusChanged += UpdateNetworkStatus;
@@ -63,6 +66,8 @@ public class ExperimentController : MonoBehaviour {
 			tcpClient.IncomingDataFromSensor += IncomingDataFromSensor;
 		}
 
+		stiffnessBar.enabled = false;
+		stiffnessBar2.enabled = false;
 		choiceSelector.enabled = false;
 		continueMenu.enabled = false;
 		quitMenu.enabled = false;
@@ -176,7 +181,12 @@ public class ExperimentController : MonoBehaviour {
 		
 		if (stiffnessBar.enabled) {
 			var tmpLocalScale = stiffnessGuage.localScale;
-			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, stiffness, tmpLocalScale.z);
+			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, baseStiffness, tmpLocalScale.z);
+		}
+		if (stiffnessBar2.enabled) {
+			var tmpLocalScale2 = stiffnessGuage2.localScale;
+			stiffnessGuage2.localScale = new Vector3(tmpLocalScale2.x, stiffness, tmpLocalScale2.z);
+
 		}
 
 		if (slingJoint != null) {
@@ -257,14 +267,18 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	private void LoadNextDescription() {
+		stiffnessBar.enabled = true;
+		stiffnessBar2.enabled = true;
 		continueMenu.enabled = true;
+
 		GameObject.Find("EXPDescription").GetComponent<Text>().text = expDescriptions[0];
 		expDescriptions.RemoveAt(0);
-
 	}
 
 	public void LoadNextTrial() {
 		continueMenu.enabled = false;
+		stiffnessBar.enabled = false;
+		stiffnessBar2.enabled = false;
 		LoadTask(expName[0]);
 	}
 
@@ -295,18 +309,19 @@ public class ExperimentController : MonoBehaviour {
 
 	void UpdateNetworkStatus(String status) {
 		networkConnectionStatus.text = status;
-		if (status == "Connected") {
-			stiffnessBar.enabled = true;
-		}
 	}
 
 	void IncomingDataFromSensor(float[] data) {
-		float flexor = Math.Max(0, Math.Min(1,data[0]));
-		float extensor = Math.Max(0, Math.Min(1,data[1]));
-		
-		stiffness = ((flexor + extensor) - Math.Abs(flexor - extensor)) / 2; // 2 comes from clipped strength (1 + 1)
-		stiffness *= maxStrengthRatio;
+		float flexor = Math.Max(0, Math.Min(1,data[0] * maxStrengthRatio));
+		float extensor = Math.Max(0, Math.Min(1,data[1] * maxStrengthRatio));
 
+		float baseFlexor = Math.Max(0, Math.Min(1,data[0]));
+		float baseExtensor = Math.Max(0, Math.Min(1,data[1]));
+
+		baseStiffness = ((baseFlexor + baseExtensor) - Math.Abs(baseFlexor - baseExtensor)) / 2; // 2 comes from clipped strength (1 + 1)
+
+		stiffness = ((flexor + extensor) - Math.Abs(flexor - extensor)) / 2; // 2 comes from clipped strength (1 + 1)
+		
 		if(inExperiment && tcpClient.connecting) {
 			//should write signals to file here
 			bool collided = false;

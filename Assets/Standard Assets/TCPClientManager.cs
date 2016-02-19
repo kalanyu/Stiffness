@@ -5,6 +5,7 @@ using System.Collections;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using System.ComponentModel;
 using System.Collections.Generic;
 
 public class TCPClientManager : MonoBehaviour {
@@ -13,7 +14,6 @@ public class TCPClientManager : MonoBehaviour {
 	public bool connecting = false;
     private String[] values;
 	public String msg = "";
-    Thread rThread;
 	TcpClient client;
 //	private List<List<float> > signals = new List<List<float>>();
 	public float[] serverSignals = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
@@ -44,9 +44,14 @@ public class TCPClientManager : MonoBehaviour {
             if (client.Connected)
             {
                 mRunning = true;
-                ThreadStart ts2 = new ThreadStart(Reads);
-                rThread = new Thread(ts2);
-                rThread.Start();
+				var bw = new BackgroundWorker();
+				bw.DoWork += new DoWorkEventHandler(Reads);
+				bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(reconnectHandler);
+//   if (System.Threading.SynchronizationContext.Current == null) {
+//            throw new InvalidOperationException("You are on the wrong thread")
+//		        }
+				bw.RunWorkerAsync();
+
                 client.EndConnect(result);
 
                 if (statusChanged != null)
@@ -70,6 +75,10 @@ public class TCPClientManager : MonoBehaviour {
             }
             StartCoroutine(reconnect());
         }
+	}
+
+	public void reconnectHandler(object sender, RunWorkerCompletedEventArgs e) {
+		Dispatcher.Instance.Invoke(connect);
 	}
 
 	public IEnumerator reconnect() {
@@ -117,53 +126,69 @@ public class TCPClientManager : MonoBehaviour {
 		}
         //not connecting to any server
         // wait fpr listening thread to terminate (max. 500ms)
-		if (rThread != null) {
-	        rThread.Join(500);
-		}
+//		if (rThread != null) {
+//	        rThread.Join(500);
+//		}
     }
 	
-	void Reads()
+	void Reads(object sender, DoWorkEventArgs e)
 	{
 		
 		while(mRunning)
 		{
 			NetworkStream stream = client.GetStream();
+			stream.ReadTimeout = 10000;
 
 				if (stream.DataAvailable)
 				{
 //					Debug.Log("Prepare to read");
-					StreamReader reader = new StreamReader(stream);
-					msg = reader.ReadLine();
-
-					if(!msg.Contains("Initiate"))
-					{
-						values = msg.Split(","[0]);
+					try {
+						StreamReader reader = new StreamReader(stream);
 					
-						for (int j = 0; j < channel * 2; j++) //times 2 for raw channels
-						{	
-							serverSignals[j] = float.Parse(values[j]);
+						msg = reader.ReadLine();
+	
+						if(!msg.Contains("Initiate"))
+						{
+							values = msg.Split(","[0]);
+						
+							for (int j = 0; j < channel * 2; j++) //times 2 for raw channels
+							{	
+								serverSignals[j] = float.Parse(values[j]);
+							}
+	
+							if (IncomingDataFromSensor != null) {
+								IncomingDataFromSensor(serverSignals);
+							}
+						} else {					
+							channel = int.Parse(msg.Split(':')[1]);
 						}
-
-						if (IncomingDataFromSensor != null) {
-							IncomingDataFromSensor(serverSignals);
-						}
-					} else {					
-						channel = int.Parse(msg.Split(':')[1]);
+	//					Debug.Log(msg);
+						
+						StreamWriter writer = new StreamWriter(stream);
+						// \r is necessary for CocoaAsyncSocket to read
+						writer.WriteLine("Acknowledged\r");
+						writer.Flush();
+	//					writer.AutoFlush = true;
+	//					Debug.Log("WriteBack");			
 					}
-//					Debug.Log(msg);
-					
-					StreamWriter writer = new StreamWriter(stream);
-					// \r is necessary for CocoaAsyncSocket to read
-					writer.WriteLine("Acknowledged\r");
-					writer.Flush();
-//					writer.AutoFlush = true;
-//					Debug.Log("WriteBack");				
+					catch {
+						Debug.Log("can't read from server");
+						mRunning = false;
+					}	
 				}
+
 			}
+
+		Debug.Log("break from while");
 	}
 
     void OnDestroy()
     {
         stopListening();
     }
+
+	void OnApplicationQuit()
+	{
+		stopListening();
+	}
 }
