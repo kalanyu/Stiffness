@@ -50,6 +50,7 @@ public class ExperimentController : MonoBehaviour {
 	private int pattern;
 	
 	private WeightCylinder cylinderObject;
+	private DateTime timeSinceLastCalled;
 
 	List<string> expName = new List<String>();
 	List<string> expDescriptions = new List<String>();
@@ -172,12 +173,14 @@ public class ExperimentController : MonoBehaviour {
 			}
 		}
 		
-//		if (Input.GetKey(KeyCode.D)) {
-//			if(!inExperiment) {
-//				 StartCoroutine(StartTrial());
-//			
-//			}
-//		}
+		if (Input.GetKey(KeyCode.UpArrow)) {
+			var tempStiffness = stiffness + 0.1f;
+			stiffness = Math.Min(1, tempStiffness);
+		}
+		if (Input.GetKey(KeyCode.DownArrow)) {
+			var tempStiffness = stiffness - 0.1f;
+			stiffness = Math.Max(0, tempStiffness);
+		}
 		
 		if (stiffnessBar.enabled) {
 			var tmpLocalScale = stiffnessGuage.localScale;
@@ -190,8 +193,11 @@ public class ExperimentController : MonoBehaviour {
 		}
 
 		if (slingJoint != null) {
-			if (stiffness > 0.2f)
+			if (stiffness > 0.1f)
 			{
+				if (slingJoint.gameObject.GetComponent<Rigidbody>().IsSleeping()) {
+					slingJoint.gameObject.GetComponent<Rigidbody>().WakeUp();
+				}
 				currentTime += 1.0f/60.0f;
 				slingJoint.spring = Mathf.Lerp(40.7f, 40.7f + (121.85f * stiffness), currentTime);
 				slingJoint.damper = 15;
@@ -206,7 +212,7 @@ public class ExperimentController : MonoBehaviour {
 	public void ChoiceSelected(int choiceIndex) {
 		//writes answer to file
 		choiceSelector.enabled = false;
-		fileManager.writeFileWithMessage(currentTrial + "," + currentTrialParameters[1] + "," + currentTrialParameters[2] + "," + choiceIndex + "\n");
+		fileManager.writeFileWithMessage(currentTrial + "," + currentTrialParameters[1] + "," + currentTrialParameters[2] + "," + choiceIndex);
 		
 		if (currentTrial == expParamerters.Length) {
 			StopExperiment();
@@ -299,6 +305,7 @@ public class ExperimentController : MonoBehaviour {
 			currentIteration = 1;
 	
 			StartCoroutine(StartTrial());
+			timeSinceLastCalled = DateTime.Now;
 		} catch {
 			Debug.Log("sth wrong with file");
 		}
@@ -312,11 +319,14 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	void IncomingDataFromSensor(float[] data) {
+		
 		float flexor = Math.Max(0, Math.Min(1,data[0] * maxStrengthRatio));
 		float extensor = Math.Max(0, Math.Min(1,data[1] * maxStrengthRatio));
 
 		float baseFlexor = Math.Max(0, Math.Min(1,data[0]));
 		float baseExtensor = Math.Max(0, Math.Min(1,data[1]));
+
+		DateTime now = DateTime.Now;
 
 		baseStiffness = ((baseFlexor + baseExtensor) - Math.Abs(baseFlexor - baseExtensor)) / 2; // 2 comes from clipped strength (1 + 1)
 
@@ -328,9 +338,11 @@ public class ExperimentController : MonoBehaviour {
 			if (cylinderObject != null) {
 				collided = cylinderObject.collided;
 			}
-
-			filteredSignalsRecorder.writeFileWithMessage(currentTrial + "," + DateTime.Now.ToString("mm:ss:ffff") + "," + data[0] + "," + data[1] + "," + ( collided? "1" : "0"));
-			rawSignalsRecorder.writeFileWithMessage(currentTrial + "," + DateTime.Now.ToString("mm:ss:ffff") + "," + data[2] + "," + data[3] + "," + ( collided? "1" : "0"));
+			
+			var timeDifference = (now - timeSinceLastCalled).TotalSeconds;
+			filteredSignalsRecorder.writeFileWithMessage(currentTrial + "," + timeDifference + "," + data[0] + "," + data[1] + "," + ( collided? "1" : "0"));
+			rawSignalsRecorder.writeFileWithMessage(currentTrial + "," + timeDifference + "," + data[2] + "," + data[3] + "," + ( collided? "1" : "0"));
+			
 		}
 	}
 
