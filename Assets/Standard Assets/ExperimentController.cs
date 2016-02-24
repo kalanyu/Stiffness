@@ -40,6 +40,7 @@ public class ExperimentController : MonoBehaviour {
 	private string[] expParamerters;
 	private string[] currentTrialParameters;
 	public Text networkConnectionStatus;
+	public Text experimentTrialCount;
 
 	private float stiffness;
 	private float baseStiffness;
@@ -84,6 +85,8 @@ public class ExperimentController : MonoBehaviour {
 
 		if (currentIteration == 1) {
 			currentTrialParameters = expParamerters[currentTrial].Split(',');
+			experimentTrialCount.text = (currentTrial+1) + "/" + expParamerters.Length + " : " + expName.Count + " exp remaining";
+
 			currentTrial += 1;
 			if (expName[0].StartsWith("low")) {
 				maxStrengthRatio = 2;
@@ -303,7 +306,9 @@ public class ExperimentController : MonoBehaviour {
 			currentTrial = 0;
 			//one trial has two interations
 			currentIteration = 1;
-	
+
+			experimentTrialCount.text =  "0/" + expParamerters.Length + " : " + expName.Count + " exp remaining";
+
 			StartCoroutine(StartTrial());
 			timeSinceLastCalled = DateTime.Now;
 		} catch {

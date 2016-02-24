@@ -1,0 +1,6 @@
+02242016
+Name:Aasdas
+Surname:Asdasd
+Age:22
+BodyType:Normal
+Sex: Male
