@@ -1,0 +1,6 @@
+02262016
+Name:Asdsad
+Surname:Asdas
+Age:22
+BodyType:Normal
+Sex: Male

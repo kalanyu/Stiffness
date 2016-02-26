@@ -1,0 +1,6 @@
+02262016
+Name:Adasdsa
+Surname:Asda
+Age:23
+BodyType:Normal
+Sex: Male

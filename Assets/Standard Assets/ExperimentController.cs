@@ -68,8 +68,8 @@ public class ExperimentController : MonoBehaviour {
 			tcpClient.IncomingDataFromSensor += IncomingDataFromSensor;
 		}
 
-		stiffnessBar.enabled = false;
-		stiffnessBar2.enabled = false;
+//		stiffnessBar.enabled = false;
+//		stiffnessBar2.enabled = false;
 		choiceSelector.enabled = false;
 		continueMenu.enabled = false;
 		quitMenu.enabled = false;
@@ -344,9 +344,9 @@ public class ExperimentController : MonoBehaviour {
 				collided = cylinderObject.collided;
 			}
 			
-			var timeDifference = (now - timeSinceLastCalled).TotalSeconds;
-			filteredSignalsRecorder.writeFileWithMessage(currentTrial + "," + timeDifference + "," + data[0] + "," + data[1] + "," + ( collided? "1" : "0"));
-			rawSignalsRecorder.writeFileWithMessage(currentTrial + "," + timeDifference + "," + data[2] + "," + data[3] + "," + ( collided? "1" : "0"));
+			var nowString = now.ToString("HH:mm:ss.fff");
+			filteredSignalsRecorder.writeFileWithMessage(currentTrial + "," + nowString + "," + data[0] + "," + data[1] + "," + currentIteration + "," + ( collided? "1" : "0"));
+			rawSignalsRecorder.writeFileWithMessage(currentTrial + "," + nowString + "," + data[2] + "," + data[3] + "," + currentIteration + "," + ( collided? "1" : "0"));
 			
 		}
 	}

@@ -9,17 +9,25 @@ public class WeightCylinder : MonoBehaviour {
 	void Start () {
 	}
 	
-	void OnTriggerEnter(Collider other) {
-		if (other.name == "Cube") {
-			collided = true;
-		}
-
-	}	// Update is called once per frame
+	// Update is called once per frame
 
 	void Update () {
 		if (gameObject.GetComponent<Rigidbody> ().IsSleeping() && !printed) {
-			Debug.Log(gameObject.transform.position.y);
+//			Debug.Log(gameObject.transform.position.y);
 			printed = true;
+		}
+	}
+
+	void OnCollisionEnter(Collision collision) {
+		if (collision.gameObject.name == "Placeholder") {
+			collided = true;
+			var weightPos = this.transform.position;
+			var cubeTransform = transform.parent.transform.Find("Cube").transform.position;
+			weightPos.y -= 0.128f;
+			weightPos.x = cubeTransform.x;
+			weightPos.z = cubeTransform.z;
+			transform.parent.transform.Find("Cube").transform.position = weightPos;
+			transform.parent.transform.Find("Cube").transform.parent = this.transform;
 		}
 	}
 }

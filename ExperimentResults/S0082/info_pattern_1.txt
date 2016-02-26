@@ -1,0 +1,6 @@
+02262016
+Name:Asdadas
+Surname:Asdasd
+Age:22
+BodyType:Muscular
+Sex: Male
