@@ -134,12 +134,6 @@ public class ExperimentController : MonoBehaviour {
 		//shows UI for choice making here
 		inExperiment = false;
 
-		if(inExperiment && tcpClient.connecting) {
-			//should write signals to file here
-			filteredSignalsRecorder.writeFileWithMessage("Finished trial : " + currentTrial);
-			rawSignalsRecorder.writeFileWithMessage("Finished trial : " + currentTrial);
-		}
-
 		//checks if show UI or need another trial
 		if(currentIteration == 2) {
 			choiceSelector.enabled = true;
@@ -180,6 +174,7 @@ public class ExperimentController : MonoBehaviour {
 			var tempStiffness = stiffness + 0.1f;
 			stiffness = Math.Min(1, tempStiffness);
 		}
+
 		if (Input.GetKey(KeyCode.DownArrow)) {
 			var tempStiffness = stiffness - 0.1f;
 			stiffness = Math.Max(0, tempStiffness);
@@ -240,8 +235,11 @@ public class ExperimentController : MonoBehaviour {
 
 		switch(type) {
 			case 1:
-				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
-				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
+//				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
+//				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
+				expName = new string[]{"highlow", "lowhigh", "lowlow", "highhigh"}.ToList();
+				expDescriptions = new string[]{highlowDesc, lowhighDesc, lowlowDesc, highhighDesc}.ToList();
+
 				break;
 			case 2:
 				expName = new string[]{"highhigh", "lowlow", "highlow", "lowhigh"}.ToList();
@@ -323,15 +321,13 @@ public class ExperimentController : MonoBehaviour {
 		networkConnectionStatus.text = status;
 	}
 
-	void IncomingDataFromSensor(float[] data) {
+	void IncomingDataFromSensor(float[] data, string timestamp) {
 		
 		float flexor = Math.Max(0, Math.Min(1,data[0] * maxStrengthRatio));
 		float extensor = Math.Max(0, Math.Min(1,data[1] * maxStrengthRatio));
 
 		float baseFlexor = Math.Max(0, Math.Min(1,data[0]));
 		float baseExtensor = Math.Max(0, Math.Min(1,data[1]));
-
-		DateTime now = DateTime.Now;
 
 		baseStiffness = ((baseFlexor + baseExtensor) - Math.Abs(baseFlexor - baseExtensor)) / 2; // 2 comes from clipped strength (1 + 1)
 
@@ -343,10 +339,12 @@ public class ExperimentController : MonoBehaviour {
 			if (cylinderObject != null) {
 				collided = cylinderObject.collided;
 			}
-			
-			var nowString = now.ToString("HH:mm:ss.fff");
-			filteredSignalsRecorder.writeFileWithMessage(currentTrial + "," + nowString + "," + data[0] + "," + data[1] + "," + currentIteration + "," + ( collided? "1" : "0"));
-			rawSignalsRecorder.writeFileWithMessage(currentTrial + "," + nowString + "," + data[2] + "," + data[3] + "," + currentIteration + "," + ( collided? "1" : "0"));
+			//ensure consistency
+			var trialNumber = currentTime;
+			int iteration = currentIteration; 
+			var collision = collided? "1" : "0";
+			filteredSignalsRecorder.writeFileWithMessage(trialNumber + "," + timestamp + "," + data[0] + "," + data[1] + "," + iteration + "," + collision);
+			rawSignalsRecorder.writeFileWithMessage(trialNumber + "," + timestamp + "," + data[2] + "," + data[3] + "," + iteration + "," + collision);
 			
 		}
 	}

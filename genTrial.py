@@ -27,10 +27,10 @@ with open(filename+'.csv','w') as f:
 
             f.write(str(count) + ',') #trial count
             if filename != "lowhigh" and filename != "highlow":
-                trial_info += (variation[index] if order else variation[4]) + ','
-                trial_info += (variation[4] if order else variation[index])
+                trial_info += (variation[index] if order else variation[3]) + ','
+                trial_info += (variation[3] if order else variation[index])
             else:
-                trial_info += (variation[4] + ',') #stimulus weight
+                trial_info += (variation[3] + ',') #stimulus weight
                 trial_info += variation[index] #comparison weight
 
             print "line " + str(count) + ":" + trial_info

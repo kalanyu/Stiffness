@@ -19,9 +19,11 @@ public class TCPClientManager : MonoBehaviour {
 	public float[] serverSignals = {0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 	public int bufferSize = 10;
 	public int channel = 2;
-	
+	public int samplingRate = 0;
+	public string filteredFileName = "";
+	public string rawFileName = "";
 	public delegate void ConnectionStatusChanged(String status);
-	public delegate void IncomingDataEvent(float[] data);
+	public delegate void IncomingDataEvent(float[] data, string time);
 	public ConnectionStatusChanged statusChanged;
 	public IncomingDataEvent IncomingDataFromSensor;
 
@@ -155,12 +157,17 @@ public class TCPClientManager : MonoBehaviour {
 							{	
 								serverSignals[j] = float.Parse(values[j]);
 							}
-	
+							var timestamp = values[values.Length - 1];
+
 							if (IncomingDataFromSensor != null) {
-								IncomingDataFromSensor(serverSignals);
+								IncomingDataFromSensor(serverSignals, timestamp);
 							}
 						} else {					
-							channel = int.Parse(msg.Split(':')[1]);
+							var metaData = msg.Split(':');
+							channel = int.Parse(metaData[1]);
+							samplingRate = int.Parse(metaData[2]);
+							filteredFileName = metaData[3];
+							rawFileName = metaData[4];
 						}
 	//					Debug.Log(msg);
 						

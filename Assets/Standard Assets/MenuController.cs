@@ -157,6 +157,16 @@ public class MenuController : MonoBehaviour {
 					sw.WriteLine("Sex: Male");
 				else
 					sw.WriteLine("Sex: Female");
+
+				var tcpClient = GameObject.Find("TCPClientManager");
+				if (tcpClient != null) {
+					var clientComponent = tcpClient.GetComponent<TCPClientManager>();
+					sw.WriteLine("SamplingRate:" + clientComponent.samplingRate);
+					sw.WriteLine("FilteredFileName:" + clientComponent.filteredFileName);
+					sw.WriteLine("RawFileName:" + clientComponent.rawFileName);
+				} else {
+					Debug.Log("not connected to the data server");
+				}
             }
 	        
 			

@@ -1,0 +1,9 @@
+03012016
+Name:K
+Surname:Z
+Age:27
+BodyType:Muscular
+Sex: Male
+SamplingRate:1000
+FilteredFileName:/Users/kalanyuzintus-art/Desktop/EMGSensingData/2016/3/1_15_03_59_filtered.csv
+RawFileName:/Users/kalanyuzintus-art/Desktop/EMGSensingData/2016/3/1_15_03_59_raw.csv
