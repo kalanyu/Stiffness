@@ -1,0 +1,9 @@
+03182016
+Name:Qwqwe
+Surname:Aasd
+Age:22
+BodyType:Normal
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

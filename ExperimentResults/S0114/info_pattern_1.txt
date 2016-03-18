@@ -1,0 +1,9 @@
+03182016
+Name:Asdasd
+Surname:Asdas
+Age:1
+BodyType:Slim
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

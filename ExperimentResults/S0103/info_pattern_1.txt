@@ -1,0 +1,9 @@
+03182016
+Name:Asdasd
+Surname:Asda
+Age:22
+BodyType:Muscular
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

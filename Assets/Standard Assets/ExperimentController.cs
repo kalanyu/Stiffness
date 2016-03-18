@@ -8,12 +8,14 @@ using UnityEngine.UI;
 
 
 public class ExperimentController : MonoBehaviour {
-
-// Divides into two patterns , loop between each experiment for 90 trials and pause with confirm button
-	public GameObject ceiling;
+	public int experimentType = 0;
+	private string[] stimulusName = { "Spring", "ForcePickupHand", "StiffnessPickupHand", "ForcePreventFall", "StiffnessPreventFall"};
+	//experiment type: 0 stiffness pull up, 1 force pickup, 2 stiffness pickup, 3 force prevent fall, 4 stiffness prevent fall
+	// Divides into two patterns , loop between each experiment for 90 trials and pause with confirm button
+	public GameObject system;
 	public AudioSource startingBeeps;
-    private SpringJoint slingJoint;
- 	private float currentTime = 0.0f; 
+	private object handForce;
+
 
 	public Canvas choiceSelector; 
 	public Canvas stiffnessBar;
@@ -42,7 +44,7 @@ public class ExperimentController : MonoBehaviour {
 	public Text networkConnectionStatus;
 	public Text experimentTrialCount;
 
-	private float stiffness;
+	public float stiffness;
 	private float baseStiffness;
 
 	public float maxStrengthRatio = 1.0f;
@@ -50,7 +52,7 @@ public class ExperimentController : MonoBehaviour {
 	private string resultDirectory;
 	private int pattern;
 	
-	private WeightCylinder cylinderObject;
+	private WeightCylinder weightObject;
 	private DateTime timeSinceLastCalled;
 
 	List<string> expName = new List<String>();
@@ -59,7 +61,6 @@ public class ExperimentController : MonoBehaviour {
 
 	 // Use this for initialization
 	 void Start () {
-
 		tcpClient = GameObject.Find("TCPClientManager").GetComponent<TCPClientManager>();
 
 		if(tcpClient != null) {
@@ -68,8 +69,7 @@ public class ExperimentController : MonoBehaviour {
 			tcpClient.IncomingDataFromSensor += IncomingDataFromSensor;
 		}
 
-//		stiffnessBar.enabled = false;
-//		stiffnessBar2.enabled = false;
+
 		choiceSelector.enabled = false;
 		continueMenu.enabled = false;
 		quitMenu.enabled = false;
@@ -104,19 +104,31 @@ public class ExperimentController : MonoBehaviour {
 		
 //		Debug.Log(expName[0] + ":iteration " + currentIteration + ": musclePowerNeeded " + (1/maxStrengthRatio));
 
-		if (ceiling == null) {
-			ceiling = Instantiate(Resources.Load("WeakSpring")) as GameObject;
-			ceiling.name = "Ceiling";
-			cylinderObject = GameObject.Find("Weight").GetComponent<WeightCylinder> ();
+		if (system == null) {
+			system = Instantiate(Resources.Load(stimulusName[experimentType])) as GameObject;
+			system.name = "system";
 
-			foreach(Rigidbody body in ceiling.GetComponentsInChildren<Rigidbody>()) {
+			switch(experimentType) {
+				case 0:
+					handForce = system.GetComponentInChildren<WeightCylinder>();
+					break;
+				case 1:
+					handForce = system.GetComponentInChildren<ForcePickup>();
+					break;
+				default:
+					break;
+			}
+
+			foreach(Rigidbody body in system.GetComponentsInChildren<Rigidbody>()) {
 				if (body.name == "Weight") {
 					body.mass = float.Parse(currentTrialParameters[currentIteration]);
+					if (handForce is ForcePickup) {
+						(handForce as ForcePickup).resetSupportForce();
+					}
+					
 					Debug.Log(expParamerters.Length + "," + currentTrial + "," + currentIteration + "," + body.mass );
-
 				}
 			}
-			slingJoint = ceiling.GetComponentInChildren<SpringJoint>();
 		}
 
 		trialProgress = 0.0f;
@@ -124,13 +136,13 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	void StopTrial () {
-		Destroy(cylinderObject.gameObject);
-		Destroy(GameObject.Find("Ceiling"));
+		for (int i = 0; i < system.transform.childCount; i++)
+		{
+			Destroy(system.transform.GetChild(i).gameObject);
+		}
+		Destroy(system);
 		
-		cylinderObject = null;
-		
-		ceiling = null;
-		slingJoint = null;
+		system = null;
 		//shows UI for choice making here
 		inExperiment = false;
 
@@ -190,19 +202,16 @@ public class ExperimentController : MonoBehaviour {
 
 		}
 
-		if (slingJoint != null) {
-			if (stiffness > 0.1f)
-			{
-				if (slingJoint.gameObject.GetComponent<Rigidbody>().IsSleeping()) {
-					slingJoint.gameObject.GetComponent<Rigidbody>().WakeUp();
-				}
-				currentTime += 1.0f/60.0f;
-				slingJoint.spring = Mathf.Lerp(40.7f, 40.7f + (121.85f * stiffness), currentTime);
-				slingJoint.damper = 15;
-			} else {
-				slingJoint.spring = 40.7f;
-				slingJoint.damper = 7;
-				currentTime = 0;
+		if (handForce != null) {
+			switch(experimentType) {
+				case 0:
+					(handForce as WeightCylinder).stiffness = stiffness;
+					break;
+				case 1:
+					(handForce as ForcePickup).stiffness = stiffness;
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -228,18 +237,17 @@ public class ExperimentController : MonoBehaviour {
 
 	void StartExperiment (int type) {
 		pattern = type;
-		string lowlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to resist the object from falling off the screen and align the object's place holder with the onscreen white bar. The task requires low muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
-		string highhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to resist the object from falling off the screen and align the object's place holder with the onscreen white bar. The task requires high muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
-		string lowhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to resist the object from falling off the screen and align the object's place holder with the onscreen white bar. The task requires low muscle strength for the first object and high muscle strength for the second object.After two objects disappeared, you will need to choose which of the two is heavier.";
-		string highlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to resist the object from falling off the screen and align the object's place holder with the onscreen white bar. The task requires high muscle strength for the first object and low muscle strength for the second object After two objects disappeared, you will need to choose which of the two is heavier.";
+		string lowlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to to align the object's place holder with the onscreen white bar. The task requires low muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
+		string highhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires high muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
+		string lowhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires low muscle strength for the first object and high muscle strength for the second object.After two objects disappeared, you will need to choose which of the two is heavier.";
+		string highlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires high muscle strength for the first object and low muscle strength for the second object After two objects disappeared, you will need to choose which of the two is heavier.";
 
 		switch(type) {
 			case 1:
 //				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
 //				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
-				expName = new string[]{"highlow", "lowhigh", "lowlow", "highhigh"}.ToList();
-				expDescriptions = new string[]{highlowDesc, lowhighDesc, lowlowDesc, highhighDesc}.ToList();
-
+				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
+				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
 				break;
 			case 2:
 				expName = new string[]{"highhigh", "lowlow", "highlow", "lowhigh"}.ToList();
@@ -336,11 +344,11 @@ public class ExperimentController : MonoBehaviour {
 		if(inExperiment && tcpClient.connecting) {
 			//should write signals to file here
 			bool collided = false;
-			if (cylinderObject != null) {
-				collided = cylinderObject.collided;
+			if (weightObject != null) {
+				collided = weightObject.collided;
 			}
 			//ensure consistency
-			var trialNumber = currentTime;
+			var trialNumber = currentTrial;
 			int iteration = currentIteration; 
 			var collision = collided? "1" : "0";
 			filteredSignalsRecorder.writeFileWithMessage(trialNumber + "," + timestamp + "," + data[0] + "," + data[1] + "," + iteration + "," + collision);

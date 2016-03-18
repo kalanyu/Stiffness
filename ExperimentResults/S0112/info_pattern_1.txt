@@ -1,0 +1,9 @@
+03182016
+Name:Adsad
+Surname:Asdsad
+Age:22
+BodyType:Normal
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

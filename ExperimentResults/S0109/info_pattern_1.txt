@@ -1,0 +1,9 @@
+03182016
+Name:Asdasd
+Surname:Adsasd
+Age:1
+BodyType:Muscular
+Sex: Female
+SamplingRate:0
+FilteredFileName:
+RawFileName:
