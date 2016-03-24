@@ -1,0 +1,9 @@
+03222016
+Name:Asdasd
+Surname:Adssa
+Age:11
+BodyType:Normal
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

@@ -14,7 +14,7 @@ public class ExperimentController : MonoBehaviour {
 	// Divides into two patterns , loop between each experiment for 90 trials and pause with confirm button
 	public GameObject system;
 	public AudioSource startingBeeps;
-	private object handForce;
+	private StiffnessControlledObjects handForce;
 
 
 	public Canvas choiceSelector; 
@@ -115,6 +115,12 @@ public class ExperimentController : MonoBehaviour {
 				case 1:
 					handForce = system.GetComponentInChildren<ForcePickup>();
 					break;
+				case 3:
+					handForce = system.GetComponentInChildren<ForcePreventFall>();
+					break;
+				case 4:
+					handForce = system.GetComponentInChildren<StiffnessPreventFall>();
+					break;
 				default:
 					break;
 			}
@@ -124,6 +130,11 @@ public class ExperimentController : MonoBehaviour {
 					body.mass = float.Parse(currentTrialParameters[currentIteration]);
 					if (handForce is ForcePickup) {
 						(handForce as ForcePickup).resetSupportForce();
+					} else if (handForce is StiffnessPreventFall) {
+						//checks task name and modify stiffness accordingly
+						(handForce as StiffnessPreventFall).springConstant = 162.55f;
+					} else if (handForce is ForcePreventFall) {
+						(handForce as ForcePreventFall).springConstant = 162.55f;
 					}
 					
 					Debug.Log(expParamerters.Length + "," + currentTrial + "," + currentIteration + "," + body.mass );
@@ -203,16 +214,7 @@ public class ExperimentController : MonoBehaviour {
 		}
 
 		if (handForce != null) {
-			switch(experimentType) {
-				case 0:
-					(handForce as WeightCylinder).stiffness = stiffness;
-					break;
-				case 1:
-					(handForce as ForcePickup).stiffness = stiffness;
-					break;
-				default:
-					break;
-			}
+			handForce.stiffness = stiffness;
 		}
 	}
 

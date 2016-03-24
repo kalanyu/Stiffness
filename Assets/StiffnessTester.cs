@@ -3,13 +3,14 @@ using System.Collections;
 using System;
 
 public class StiffnessTester : MonoBehaviour {
-	private float stiffness;
+	public float stiffness;
+	public float springConstant;
     private SpringJoint slingJoint;
  	private float currentTime = 0.0f; 
-
+	
 	// Use this for initialization
 	void Start () {
-		slingJoint = GameObject.Find("Weight").GetComponentInChildren<SpringJoint>();
+		slingJoint = this.transform.parent.transform.Find("hand").GetComponentInChildren<SpringJoint>();
 		stiffness = 1;
 	}
 	
@@ -34,9 +35,7 @@ public class StiffnessTester : MonoBehaviour {
 					slingJoint.gameObject.GetComponent<Rigidbody>().WakeUp();
 				}
 				currentTime += 1.0f/60.0f;
-				slingJoint.spring = Mathf.Lerp(162.55f, 40.7f + (122.48f * stiffness), currentTime);
-				Debug.Log(slingJoint.spring);
-				slingJoint.damper = 7;
+				slingJoint.spring = Mathf.Lerp(springConstant, springConstant * stiffness, currentTime);
 			if(currentTime == 1) {
 				currentTime = 0;
 			}

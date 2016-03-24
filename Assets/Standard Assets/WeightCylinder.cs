@@ -2,18 +2,15 @@
 using System;
 using System.Collections;
 
-public class WeightCylinder : MonoBehaviour {
+public class WeightCylinder : StiffnessControlledObjects {
 
-	private bool printed = false;
 	private SpringJoint slingJoint;
-	public float stiffness = 1.0f;
-	private float previousStiffness = 0.0f;
-	private float currentTime = 0.0f;
 	public bool collided = false;
 
 	// Use this for initialization
 	void Start () {
 		slingJoint = this.GetComponent<SpringJoint>();
+		stiffness = 0.0f;
 	}
 	
 	// Update is called once per frame
@@ -38,7 +35,6 @@ public class WeightCylinder : MonoBehaviour {
 			currentTime = 0;
 		}
 		
-		Debug.Log(slingJoint.spring);
 		currentTime = Math.Max(1, (currentTime + 1)/60.0f);
 
 		if (stiffness > 0.1f)
@@ -46,11 +42,12 @@ public class WeightCylinder : MonoBehaviour {
 			if (slingJoint.gameObject.GetComponent<Rigidbody>().IsSleeping()) {
 				slingJoint.gameObject.GetComponent<Rigidbody>().WakeUp();
 			}
-			slingJoint.spring = Mathf.Lerp(40.7f, 40.7f + (121.85f * stiffness), currentTime);
-			slingJoint.damper = 15;
-		} else {
-			slingJoint.spring = 40.7f;
+			slingJoint.spring = Mathf.Lerp(0, 40.7f * stiffness, currentTime);
+			//tests if low or high damper has any effect
 			slingJoint.damper = 7;
+		} else {
+			slingJoint.spring = 0;
+			slingJoint.damper = 0;
 		}
 
 		previousStiffness = stiffness;
