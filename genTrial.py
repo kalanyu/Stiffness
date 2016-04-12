@@ -2,7 +2,7 @@ from random import randint
 from datetime import datetime
 import sys
 
-variation = ['1','1.3','1.45','1.5','1.55','1.7','2'];
+variation = ['0.1','0.5','0.8','1','1.2','1.5','1.9'];
 trial_no = raw_input('Input total trial number for each stimulus value\n')
 print 'total trial number = ' + str(int(trial_no) * len(variation))
 

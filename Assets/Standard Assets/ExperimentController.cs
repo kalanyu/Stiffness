@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class ExperimentController : MonoBehaviour {
 	public int experimentType = 0;
-	private string[] stimulusName = { "Spring", "ForcePickupHand", "StiffnessPickupHand", "ForcePreventFall", "StiffnessPreventFall"};
+	private string[] stimulusName = {"ForcePickupHand", "Spring", "ForcePreventFall", "StiffnessPreventFall"};
 	//experiment type: 0 stiffness pull up, 1 force pickup, 2 stiffness pickup, 3 force prevent fall, 4 stiffness prevent fall
 	// Divides into two patterns , loop between each experiment for 90 trials and pause with confirm button
 	public GameObject system;
@@ -44,7 +44,7 @@ public class ExperimentController : MonoBehaviour {
 	public Text networkConnectionStatus;
 	public Text experimentTrialCount;
 
-	public float stiffness;
+	public float stiffness = 0.05f;
 	private float baseStiffness;
 
 	public float maxStrengthRatio = 1.0f;
@@ -79,9 +79,7 @@ public class ExperimentController : MonoBehaviour {
 	IEnumerator StartTrial () {
 		//add waiting time
 		startingBeeps.Play();
-		yield return new WaitForSeconds(4f * Time.timeScale);
 		//play sounds to notice that the trial is starting
-		inExperiment = true;
 
 		if (currentIteration == 1) {
 			currentTrialParameters = expParamerters[currentTrial].Split(',');
@@ -102,7 +100,6 @@ public class ExperimentController : MonoBehaviour {
 			}
 		}
 		
-//		Debug.Log(expName[0] + ":iteration " + currentIteration + ": musclePowerNeeded " + (1/maxStrengthRatio));
 
 		if (system == null) {
 			system = Instantiate(Resources.Load(stimulusName[experimentType])) as GameObject;
@@ -110,15 +107,15 @@ public class ExperimentController : MonoBehaviour {
 
 			switch(experimentType) {
 				case 0:
-					handForce = system.GetComponentInChildren<WeightCylinder>();
-					break;
-				case 1:
 					handForce = system.GetComponentInChildren<ForcePickup>();
 					break;
-				case 3:
+				case 1:
+					handForce = system.GetComponentInChildren<WeightCylinder>();
+					break;
+				case 2:
 					handForce = system.GetComponentInChildren<ForcePreventFall>();
 					break;
-				case 4:
+				case 3:
 					handForce = system.GetComponentInChildren<StiffnessPreventFall>();
 					break;
 				default:
@@ -129,7 +126,7 @@ public class ExperimentController : MonoBehaviour {
 				if (body.name == "Weight") {
 					body.mass = float.Parse(currentTrialParameters[currentIteration]);
 					if (handForce is ForcePickup) {
-						(handForce as ForcePickup).resetSupportForce();
+//						(handForce as ForcePickup).resetSupportForce();
 					} else if (handForce is StiffnessPreventFall) {
 						//checks task name and modify stiffness accordingly
 						(handForce as StiffnessPreventFall).springConstant = 162.55f;
@@ -142,7 +139,11 @@ public class ExperimentController : MonoBehaviour {
 			}
 		}
 
+		yield return new WaitForSeconds(4f * Time.timeScale);
+
 		trialProgress = 0.0f;
+		inExperiment = true;
+
 		//loads trial files
 	}
 
@@ -200,16 +201,18 @@ public class ExperimentController : MonoBehaviour {
 
 		if (Input.GetKey(KeyCode.DownArrow)) {
 			var tempStiffness = stiffness - 0.1f;
-			stiffness = Math.Max(0, tempStiffness);
+			stiffness = Math.Max(0.01f, tempStiffness);
 		}
 		
 		if (stiffnessBar.enabled) {
 			var tmpLocalScale = stiffnessGuage.localScale;
-			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, baseStiffness, tmpLocalScale.z);
+			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, stiffness, tmpLocalScale.z);
 		}
 		if (stiffnessBar2.enabled) {
 			var tmpLocalScale2 = stiffnessGuage2.localScale;
-			stiffnessGuage2.localScale = new Vector3(tmpLocalScale2.x, stiffness, tmpLocalScale2.z);
+			var lowlowStiffness = ((stiffness - 0.01f)/(0.3f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
+			lowlowStiffness = Math.Min(1, lowlowStiffness);
+			stiffnessGuage2.localScale = new Vector3(tmpLocalScale2.x, lowlowStiffness, tmpLocalScale2.z);
 
 		}
 
@@ -284,8 +287,8 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	private void LoadNextDescription() {
-		stiffnessBar.enabled = true;
-		stiffnessBar2.enabled = true;
+//		stiffnessBar.enabled = true;
+//		stiffnessBar2.enabled = true;
 		continueMenu.enabled = true;
 
 		GameObject.Find("EXPDescription").GetComponent<Text>().text = expDescriptions[0];
@@ -294,8 +297,8 @@ public class ExperimentController : MonoBehaviour {
 
 	public void LoadNextTrial() {
 		continueMenu.enabled = false;
-		stiffnessBar.enabled = false;
-		stiffnessBar2.enabled = false;
+//		stiffnessBar.enabled = false;
+//		stiffnessBar2.enabled = false;
 		LoadTask(expName[0]);
 	}
 

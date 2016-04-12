@@ -5,10 +5,15 @@ using System;
 public class StiffnessPreventFall : StiffnessControlledObjects {
 	public float springConstant;
     private SpringJoint slingJoint;
+	private MeshRenderer heightGuage;
 	
 	// Use this for initialization
 	void Start () {
 		slingJoint = this.transform.parent.transform.Find("hand").GetComponentInChildren<SpringJoint>();
+		StartCoroutine(SpawnCube(3.5f));
+		heightGuage = this.transform.parent.transform.Find("heightGuage").GetComponentInChildren<MeshRenderer>();
+		heightGuage.enabled = false;
+		Invoke("RenderEnable", 3.7f);
 	}
 	
 	// Update is called once per frame
@@ -41,5 +46,16 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 
 		previousStiffness = stiffness;
 
+	}
+
+	IEnumerator SpawnCube(float seconds) {
+		Debug.Log("yield");
+		yield return new WaitForSeconds(seconds);
+		this.transform.parent.transform.Find("Weight").GetComponent<Rigidbody>().useGravity = true;
+
+	}
+
+	void RenderEnable() {
+		heightGuage.enabled = true;
 	}
 }

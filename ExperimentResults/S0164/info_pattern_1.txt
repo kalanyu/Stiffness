@@ -1,0 +1,9 @@
+04042016
+Name:Adadsadasdasda
+Surname:Adasdasd
+Age:22
+BodyType:Slim
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

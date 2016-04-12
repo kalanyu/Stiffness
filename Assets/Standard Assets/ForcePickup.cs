@@ -9,12 +9,12 @@ public class ForcePickup : StiffnessControlledObjects {
 	private Rigidbody weightInfo;
 
 	// Use this for initialization
-	void Start () {
+	void Awake() {
 		stiffness = 0.0f;
 		theForce = this.GetComponent<ConstantForce>();
 		weightInfo = GameObject.Find("Weight").GetComponent<Rigidbody>();
 		resistForce = theForce.relativeForce;
-		supportForce = weightInfo.mass * 9.8f;
+		supportForce = 9.8f;
 		resistForce.y = supportForce;
 		theForce.relativeForce = resistForce;
 	}
@@ -44,7 +44,7 @@ public class ForcePickup : StiffnessControlledObjects {
 		currentTime = Math.Max(1, (currentTime + 1)/60.0f);
 		currentTime = Math.Max(1, (currentTime + 1)/60.0f);
 		var tempForce = theForce.relativeForce;
-		tempForce.y = Mathf.Lerp(theForce.relativeForce.y, supportForce + (90 * stiffness), currentTime);
+		tempForce.y = Mathf.Lerp(theForce.relativeForce.y, 9.8f + 70 * stiffness, currentTime);
 		theForce.relativeForce = tempForce;
 
 		previousStiffness = stiffness;
