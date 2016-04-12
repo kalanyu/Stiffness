@@ -75,6 +75,12 @@ public class ExperimentController : MonoBehaviour {
 		quitMenu.enabled = false;
 	}
 
+	void HideStiffnessBars() {
+		GameObject.Find ("StiffnessBars").GetComponent<CanvasGroup> ().alpha = 0;
+	}
+	void ShowStiffnessBars() {
+		GameObject.Find ("StiffnessBars").GetComponent<CanvasGroup> ().alpha = 1;
+	}
 
 	IEnumerator StartTrial () {
 		//add waiting time
@@ -130,6 +136,7 @@ public class ExperimentController : MonoBehaviour {
 					} else if (handForce is StiffnessPreventFall) {
 						//checks task name and modify stiffness accordingly
 						(handForce as StiffnessPreventFall).springConstant = 162.55f;
+//						(handForce as StiffnessPreventFall).CollisionDetected += HideStiffnessBars;
 					} else if (handForce is ForcePreventFall) {
 						(handForce as ForcePreventFall).springConstant = 162.55f;
 					}
@@ -139,7 +146,10 @@ public class ExperimentController : MonoBehaviour {
 			}
 		}
 
-		yield return new WaitForSeconds(4f * Time.timeScale);
+		yield return new WaitForSeconds(3.5f * Time.timeScale);
+		HideStiffnessBars ();
+		yield return new WaitForSeconds(0.5f * Time.timeScale);
+
 
 		trialProgress = 0.0f;
 		inExperiment = true;
@@ -148,6 +158,12 @@ public class ExperimentController : MonoBehaviour {
 	}
 
 	void StopTrial () {
+//		if (handForce is StiffnessPreventFall) {
+//			//checks task name and modify stiffness accordingly
+//			(handForce as StiffnessPreventFall).CollisionDetected -= HideStiffnessBars;
+//		}
+		ShowStiffnessBars ();
+
 		for (int i = 0; i < system.transform.childCount; i++)
 		{
 			Destroy(system.transform.GetChild(i).gameObject);

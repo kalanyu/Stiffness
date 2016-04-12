@@ -6,6 +6,8 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 	public float springConstant;
     private SpringJoint slingJoint;
 	private MeshRenderer heightGuage;
+	public delegate void CollisionDelegate(Collision collision);
+	public CollisionDelegate CollisionDetected;
 	
 	// Use this for initialization
 	void Start () {
@@ -53,6 +55,13 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 		yield return new WaitForSeconds(seconds);
 		this.transform.parent.transform.Find("Weight").GetComponent<Rigidbody>().useGravity = true;
 
+	}
+		
+	void OnCollisionEnter(Collision collision) {
+		if (CollisionDetected != null && collision.collider.name == "hand") {
+			CollisionDetected (collision);
+		}
+//		Debug.Log (collision.collider.name);
 	}
 
 	void RenderEnable() {
