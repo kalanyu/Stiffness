@@ -1,0 +1,9 @@
+04132016
+Name:Test
+Surname:One
+Age:22
+BodyType:Muscular
+Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

@@ -60,6 +60,7 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 	void OnCollisionEnter(Collision collision) {
 		if (CollisionDetected != null && collision.collider.name == "hand") {
 			CollisionDetected (collision);
+			collided = true;
 		}
 //		Debug.Log (collision.collider.name);
 	}

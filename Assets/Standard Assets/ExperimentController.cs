@@ -44,10 +44,9 @@ public class ExperimentController : MonoBehaviour {
 	public Text networkConnectionStatus;
 	public Text experimentTrialCount;
 
-	public float stiffness = 0.05f;
-	private float baseStiffness;
+	public float stiffness = 0.01f;
 
-	public float maxStrengthRatio = 1.0f;
+//	public float maxStrengthRatio = 1.0f;
 	private float stiffnessThreshold = 1.5f;
 	private string resultDirectory;
 	private int pattern;
@@ -56,7 +55,9 @@ public class ExperimentController : MonoBehaviour {
 	private DateTime timeSinceLastCalled;
 
 	List<string> expName = new List<String>();
-	List<string> expDescriptions = new List<String>();
+	private string expDescription;
+	private Vector3 normalStiffnessScale = new Vector3();
+	private Vector3 lowStiffnessScale = new Vector3();
 
 
 	 // Use this for initialization
@@ -73,6 +74,7 @@ public class ExperimentController : MonoBehaviour {
 		choiceSelector.enabled = false;
 		continueMenu.enabled = false;
 		quitMenu.enabled = false;
+		stiffnessBar2.enabled = false;
 	}
 
 	void HideStiffnessBars() {
@@ -92,20 +94,19 @@ public class ExperimentController : MonoBehaviour {
 			experimentTrialCount.text = (currentTrial+1) + "/" + expParamerters.Length + " : " + expName.Count + " exp remaining";
 
 			currentTrial += 1;
-			if (expName[0].StartsWith("low")) {
-				maxStrengthRatio = 2;
-			} else {
-				maxStrengthRatio = 1;
-			}
+//			if (expName[0].StartsWith("low")) {
+//				maxStrengthRatio = 2;
+//			} else {
+//				maxStrengthRatio = 1;
+//			}
 		}
-		else {
-			if (expName[0].EndsWith("low")) {
-				maxStrengthRatio = 2;
-			} else {
-				maxStrengthRatio = 1;
-			}
-		}
-		
+//		else {
+//			if (expName[0].EndsWith("low")) {
+//				maxStrengthRatio = 2;
+//			} else {
+//				maxStrengthRatio = 1;
+//			}
+//		}
 
 		if (system == null) {
 			system = Instantiate(Resources.Load(stimulusName[experimentType])) as GameObject;
@@ -221,13 +222,45 @@ public class ExperimentController : MonoBehaviour {
 		}
 		
 		if (stiffnessBar.enabled) {
-			var tmpLocalScale = stiffnessGuage.localScale;
-			stiffnessGuage.localScale = new Vector3(tmpLocalScale.x, stiffness, tmpLocalScale.z);
-		}
-		if (stiffnessBar2.enabled) {
-			var tmpLocalScale2 = stiffnessGuage2.localScale;
+			
+			normalStiffnessScale = stiffnessGuage.localScale;
+			normalStiffnessScale.y = stiffness;
+
 			var lowlowStiffness = ((stiffness - 0.01f)/(0.3f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
 			lowlowStiffness = Math.Min(1, lowlowStiffness);
+
+			lowStiffnessScale = normalStiffnessScale;
+			lowStiffnessScale.y = lowlowStiffness;
+
+			if (!inExperiment) {
+				stiffnessGuage.localScale = normalStiffnessScale;
+			}
+			else if (inExperiment && currentIteration == 1 ) {
+
+				if (expName[0].StartsWith("low")) {
+					stiffnessGuage.localScale = lowStiffnessScale;
+				} else {
+					stiffnessGuage.localScale = normalStiffnessScale;
+				}
+			}
+			else if (inExperiment && currentIteration == 2 ) {
+				if (expName[0].EndsWith("low")) {
+					stiffnessGuage.localScale = lowStiffnessScale;
+				} else {
+					stiffnessGuage.localScale = normalStiffnessScale;
+				}
+			}
+
+
+		}
+		if (stiffnessBar2.enabled) {
+			var lowlowStiffness = ((stiffness - 0.01f)/(0.3f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
+			lowlowStiffness = Math.Min(1, lowlowStiffness);
+
+			lowStiffnessScale = normalStiffnessScale;
+			lowStiffnessScale.y = lowlowStiffness;
+
+			var tmpLocalScale2 = stiffnessGuage2.localScale;
 			stiffnessGuage2.localScale = new Vector3(tmpLocalScale2.x, lowlowStiffness, tmpLocalScale2.z);
 
 		}
@@ -258,21 +291,16 @@ public class ExperimentController : MonoBehaviour {
 
 	void StartExperiment (int type) {
 		pattern = type;
-		string lowlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to to align the object's place holder with the onscreen white bar. The task requires low muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
-		string highhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires high muscle strength. After two objects disappeared, you will need to choose which of the two is heavier.";
-		string lowhighDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires low muscle strength for the first object and high muscle strength for the second object.After two objects disappeared, you will need to choose which of the two is heavier.";
-		string highlowDesc = "For each trial, two objects with different weight will be displayed sequentially. Your task is to stiff your arm to align the object's place holder with the onscreen white bar. The task requires high muscle strength for the first object and low muscle strength for the second object After two objects disappeared, you will need to choose which of the two is heavier.";
+		expDescription = "For each trial, two objects with different weight will be displayed sequentially. Before each object appears, stiff your arm so that the bar fills up to, but not exceeding, the red area. Your task is to stiff your arm to to align the object's place holder with the onscreen white bar. After two objects disappeared, you will need to choose which of the two is heavier.";
 
 		switch(type) {
 			case 1:
 //				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
 //				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
-				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
-				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
+				expName = new string[]{"lowhigh", "highhigh", "lowhigh", "highlow"}.ToList();
 				break;
 			case 2:
 				expName = new string[]{"highhigh", "lowlow", "highlow", "lowhigh"}.ToList();
-				expDescriptions = new string[]{highhighDesc, lowlowDesc, highlowDesc, lowhighDesc}.ToList();
 				break;
 			default:
 				break;
@@ -307,8 +335,7 @@ public class ExperimentController : MonoBehaviour {
 //		stiffnessBar2.enabled = true;
 		continueMenu.enabled = true;
 
-		GameObject.Find("EXPDescription").GetComponent<Text>().text = expDescriptions[0];
-		expDescriptions.RemoveAt(0);
+		GameObject.Find("EXPDescription").GetComponent<Text>().text = expDescription;
 	}
 
 	public void LoadNextTrial() {
@@ -352,13 +379,13 @@ public class ExperimentController : MonoBehaviour {
 
 	void IncomingDataFromSensor(float[] data, string timestamp) {
 		
-		float flexor = Math.Max(0, Math.Min(1,data[0] * maxStrengthRatio));
-		float extensor = Math.Max(0, Math.Min(1,data[1] * maxStrengthRatio));
+//		float flexor = Math.Max(0, Math.Min(1,data[0] * maxStrengthRatio));
+//		float extensor = Math.Max(0, Math.Min(1,data[1] * maxStrengthRatio));
 
-		float baseFlexor = Math.Max(0, Math.Min(1,data[0]));
-		float baseExtensor = Math.Max(0, Math.Min(1,data[1]));
+		float flexor = Math.Max(0, Math.Min(1,data[0]));
+		float extensor = Math.Max(0, Math.Min(1,data[1]));
 
-		baseStiffness = ((baseFlexor + baseExtensor) - Math.Abs(baseFlexor - baseExtensor)) / 2; // 2 comes from clipped strength (1 + 1)
+//		baseStiffness = ((baseFlexor + baseExtensor) - Math.Abs(baseFlexor - baseExtensor)) / 2; // 2 comes from clipped strength (1 + 1)
 
 		stiffness = ((flexor + extensor) - Math.Abs(flexor - extensor)) / 2; // 2 comes from clipped strength (1 + 1)
 		
