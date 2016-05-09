@@ -1,6 +1,0 @@
-02262016
-Name:Asdasd
-Surname:Adsasdas
-Age:12
-BodyType:Normal
-Sex: Female

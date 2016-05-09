@@ -1,6 +1,0 @@
-02262016
-Name:Adadasd
-Surname:Asasd
-Age:22
-BodyType:Muscular
-Sex: Male

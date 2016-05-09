@@ -1,6 +1,0 @@
-02262016
-Name:Asdasdas
-Surname:Asdad
-Age:3
-BodyType:Muscular
-Sex: Male

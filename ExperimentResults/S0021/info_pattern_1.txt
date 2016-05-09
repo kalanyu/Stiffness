@@ -1,6 +1,0 @@
-02192016
-Name:Katestt
-Surname:Zz
-Age:27
-BodyType:Muscular
-Sex: Male

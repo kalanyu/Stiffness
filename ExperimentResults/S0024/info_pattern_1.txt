@@ -1,6 +1,0 @@
-02242016
-Name:Asd
-Surname:Asd
-Age:2
-BodyType:Slim
-Sex: Female

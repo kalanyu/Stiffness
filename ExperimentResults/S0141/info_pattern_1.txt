@@ -1,9 +1,0 @@
-03282016
-Name:Asdasd
-Surname:Asdad
-Age:2
-BodyType:Normal
-Sex: Male
-SamplingRate:0
-FilteredFileName:
-RawFileName:

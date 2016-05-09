@@ -1,6 +1,0 @@
-02262016
-Name:Asad
-Surname:Asd
-Age:1
-BodyType:Muscular
-Sex: Male

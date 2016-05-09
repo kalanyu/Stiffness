@@ -1,8 +1,0 @@
-03012016
-Name:Sadsadasdas
-Surname:Dadasdasd
-Age:22
-BodyType:Normal
-Sex: Male
-FilteredFileName:1000
-RawFileName:/Users/kalanyuzintus-art/Desktop/EMGSensingData/2016/3/1_11_40_40_filtered.csv

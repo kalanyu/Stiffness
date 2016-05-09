@@ -1,9 +1,0 @@
-03282016
-Name:Qweqe
-Surname:Qweqwe
-Age:22
-BodyType:Normal
-Sex: Male
-SamplingRate:0
-FilteredFileName:
-RawFileName:

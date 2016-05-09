@@ -221,40 +221,39 @@ public class ExperimentController : MonoBehaviour {
 			stiffness = Math.Max(0.01f, tempStiffness);
 		}
 		
+
 		if (stiffnessBar.enabled) {
 			
 			normalStiffnessScale = stiffnessGuage.localScale;
 			normalStiffnessScale.y = stiffness;
 
-			var lowlowStiffness = ((stiffness - 0.01f)/(0.3f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
+			var lowlowStiffness = ((stiffness - 0.01f)/(0.4f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
 			lowlowStiffness = Math.Min(1, lowlowStiffness);
 
-			lowStiffnessScale = normalStiffnessScale;
+			lowStiffnessScale = stiffnessGuage.localScale;
 			lowStiffnessScale.y = lowlowStiffness;
 
-			if (!inExperiment) {
-				stiffnessGuage.localScale = normalStiffnessScale;
-			}
-			else if (inExperiment && currentIteration == 1 ) {
-
+			if (currentIteration == 1) {
 				if (expName[0].StartsWith("low")) {
 					stiffnessGuage.localScale = lowStiffnessScale;
 				} else {
 					stiffnessGuage.localScale = normalStiffnessScale;
 				}
 			}
-			else if (inExperiment && currentIteration == 2 ) {
+			else if (currentIteration == 2) {
 				if (expName[0].EndsWith("low")) {
 					stiffnessGuage.localScale = lowStiffnessScale;
 				} else {
 					stiffnessGuage.localScale = normalStiffnessScale;
 				}
+			} else {
+					stiffnessGuage.localScale = normalStiffnessScale;
 			}
 
 
 		}
 		if (stiffnessBar2.enabled) {
-			var lowlowStiffness = ((stiffness - 0.01f)/(0.3f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
+			var lowlowStiffness = ((stiffness - 0.01f)/(0.4f - 0.01f)) * (0.8f - 0.01f) + 0.01f;
 			lowlowStiffness = Math.Min(1, lowlowStiffness);
 
 			lowStiffnessScale = normalStiffnessScale;
@@ -297,7 +296,7 @@ public class ExperimentController : MonoBehaviour {
 			case 1:
 //				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
 //				expDescriptions = new string[]{lowlowDesc, highhighDesc, lowhighDesc, highlowDesc}.ToList();
-				expName = new string[]{"lowhigh", "highhigh", "lowhigh", "highlow"}.ToList();
+				expName = new string[]{"lowlow", "highhigh", "lowhigh", "highlow"}.ToList();
 				break;
 			case 2:
 				expName = new string[]{"highhigh", "lowlow", "highlow", "lowhigh"}.ToList();

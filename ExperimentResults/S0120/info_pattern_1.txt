@@ -1,9 +1,0 @@
-03182016
-Name:Asdsa
-Surname:Asdas
-Age:1
-BodyType:Slim
-Sex: Female
-SamplingRate:0
-FilteredFileName:
-RawFileName:

@@ -1,6 +1,9 @@
-02182016
-Name:Asdqe
-Surname:Asdqe
-Age:28
-BodyType:Muscular
+05092016
+Name:Adsasd
+Surname:Asdas
+Age:22
+BodyType:Normal
 Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

@@ -56,7 +56,7 @@ public class FileManager {
 		{
 			fileWriter.WriteLine( text );
 			fileWriter.Flush();
-			Debug.Log("written");
+//			Debug.Log("written");
 		}
 		else
 		{

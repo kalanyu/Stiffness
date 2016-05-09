@@ -1,6 +1,0 @@
-02262016
-Name:Asdsad
-Surname:Asdasd
-Age:23
-BodyType:Slim
-Sex: Male

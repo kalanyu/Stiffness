@@ -1,9 +1,0 @@
-03222016
-Name:Adsad
-Surname:Adad
-Age:22
-BodyType:Normal
-Sex: Female
-SamplingRate:0
-FilteredFileName:
-RawFileName:

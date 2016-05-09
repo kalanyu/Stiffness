@@ -1,6 +1,0 @@
-02262016
-Name:Asdsadas
-Surname:As
-Age:25
-BodyType:Normal
-Sex: Male

@@ -1,9 +1,0 @@
-03012016
-Name:Kalanyu
-Surname:Zintusart
-Age:27
-BodyType:Muscular
-Sex: Male
-SamplingRate:1000
-FilteredFileName:/Users/kalanyuzintus-art/Desktop/EMGSensingData/2016/3/1_13_59_18_filtered.csv
-RawFileName:/Users/kalanyuzintus-art/Desktop/EMGSensingData/2016/3/1_13_59_18_raw.csv

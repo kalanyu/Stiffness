@@ -1,6 +1,0 @@
-02192016
-Name:Adasdsa
-Surname:Asdasd
-Age:13
-BodyType:Normal
-Sex: Male

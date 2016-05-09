@@ -1,6 +1,0 @@
-02252016
-Name:Yasuharu
-Surname:Koike
-Age:51
-BodyType:Normal
-Sex: Male

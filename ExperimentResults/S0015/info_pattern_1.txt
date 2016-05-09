@@ -1,6 +1,0 @@
-02192016
-Name:Asdasd
-Surname:Asdasd
-Age:2
-BodyType:Normal
-Sex: Female

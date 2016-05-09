@@ -12,6 +12,7 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 	// Use this for initialization
 	void Start () {
 		slingJoint = this.transform.parent.transform.Find("hand").GetComponentInChildren<SpringJoint>();
+
 		StartCoroutine(SpawnCube(3.5f));
 		heightGuage = this.transform.parent.transform.Find("heightGuage").GetComponentInChildren<MeshRenderer>();
 		heightGuage.enabled = false;
@@ -51,7 +52,7 @@ public class StiffnessPreventFall : StiffnessControlledObjects {
 	}
 
 	IEnumerator SpawnCube(float seconds) {
-		Debug.Log("yield");
+//		Debug.Log("yield");
 		yield return new WaitForSeconds(seconds);
 		this.transform.parent.transform.Find("Weight").GetComponent<Rigidbody>().useGravity = true;
 

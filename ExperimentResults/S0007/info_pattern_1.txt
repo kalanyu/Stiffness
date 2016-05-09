@@ -1,6 +1,9 @@
-02192016
-Name:Asdsadasd
-Surname:Adasda
-Age:2
-BodyType:Slim
+05092016
+Name:Asdasd
+Surname:Adasd
+Age:22
+BodyType:Normal
 Sex: Male
+SamplingRate:0
+FilteredFileName:
+RawFileName:

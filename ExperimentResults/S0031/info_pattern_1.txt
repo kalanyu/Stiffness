@@ -1,6 +1,0 @@
-02242016
-Name:Asdasda
-Surname:Asda
-Age:26
-BodyType:Normal
-Sex: Female

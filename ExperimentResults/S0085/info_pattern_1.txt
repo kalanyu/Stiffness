@@ -1,6 +1,0 @@
-02262016
-Name:Asdasdsad
-Surname:Asd
-Age:22
-BodyType:Normal
-Sex: Male

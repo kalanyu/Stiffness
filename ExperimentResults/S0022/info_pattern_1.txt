@@ -1,6 +1,0 @@
-02242016
-Name:Asdsada
-Surname:Asdads
-Age:68
-BodyType:Slim
-Sex: Female

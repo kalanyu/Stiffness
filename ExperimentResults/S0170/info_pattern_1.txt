@@ -1,9 +1,0 @@
-04112016
-Name:Adasd
-Surname:Asdas
-Age:2
-BodyType:Slim
-Sex: Male
-SamplingRate:0
-FilteredFileName:
-RawFileName:

@@ -1,6 +1,0 @@
-02182016
-Name:Asd
-Surname:Zxc
-Age:2
-BodyType:Slim
-Sex: Female

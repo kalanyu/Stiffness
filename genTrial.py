@@ -3,7 +3,7 @@ from datetime import datetime
 import sys
 
 # variation = ['0.1','0.5','0.8','1','1.2','1.5','1.9'];
-variation = ['1','1.4','1.7','2','2.3','2.6','3'];
+variation = ['1','1.4','1.7','2.0','2.3','2.6','3.0'];
 
 
 trial_no = raw_input('Input total trial number for each stimulus value\n')

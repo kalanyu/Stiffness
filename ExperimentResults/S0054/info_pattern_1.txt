@@ -1,6 +1,0 @@
-02262016
-Name:Asdasd
-Surname:Asda
-Age:23
-BodyType:Muscular
-Sex: Male

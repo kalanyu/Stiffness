@@ -1,9 +1,0 @@
-03222016
-Name:Adasdasd
-Surname:Asd
-Age:11
-BodyType:Muscular
-Sex: Male
-SamplingRate:0
-FilteredFileName:
-RawFileName:

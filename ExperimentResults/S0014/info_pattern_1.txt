@@ -1,6 +1,0 @@
-02192016
-Name:Qwqwe
-Surname:Qweqwe
-Age:2
-BodyType:Slim
-Sex: Male

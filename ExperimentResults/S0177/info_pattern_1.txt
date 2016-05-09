@@ -1,9 +1,0 @@
-04122016
-Name:Aasdasd
-Surname:Asd
-Age:122
-BodyType:Normal
-Sex: Male
-SamplingRate:0
-FilteredFileName:
-RawFileName:

@@ -1,9 +1,0 @@
-03182016
-Name:Asdas
-Surname:Asdas
-Age:22
-BodyType:Normal
-Sex: Female
-SamplingRate:0
-FilteredFileName:
-RawFileName:

@@ -1,6 +1,0 @@
-02242016
-Name:Asda
-Surname:As
-Age:2
-BodyType:Slim
-Sex: Female

@@ -1,6 +1,0 @@
-02242016
-Name:Aasd
-Surname:Asda
-Age:11
-BodyType:Normal
-Sex: Female

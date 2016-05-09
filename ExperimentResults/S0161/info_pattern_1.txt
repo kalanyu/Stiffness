@@ -1,9 +1,0 @@
-04042016
-Name:Asdad
-Surname:Asdad
-Age:11
-BodyType:Normal
-Sex: Female
-SamplingRate:0
-FilteredFileName:
-RawFileName:

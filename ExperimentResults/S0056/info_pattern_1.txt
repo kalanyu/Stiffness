@@ -1,6 +1,0 @@
-02262016
-Name:Asdasdas
-Surname:Asdad
-Age:22
-BodyType:Normal
-Sex: Male

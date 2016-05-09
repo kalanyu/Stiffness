@@ -1,9 +1,0 @@
-03182016
-Name:Asdad
-Surname:Asda
-Age:1
-BodyType:Normal
-Sex: Female
-SamplingRate:0
-FilteredFileName:
-RawFileName:

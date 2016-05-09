@@ -1,6 +1,0 @@
-02242016
-Name:Qweqwe
-Surname:Qeasd
-Age:22
-BodyType:Normal
-Sex: Male
